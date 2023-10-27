@@ -734,7 +734,7 @@ class BinLogStreamReader(object):
 
         cur = conn.cursor()
         cur.execute("SELECT VERSION();")
-        version_info = cur.fetchone().get("VERSION()", "")
+        version_info = cur.fetchone()[0]
 
         conn.close()
 
