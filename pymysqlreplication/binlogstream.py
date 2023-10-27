@@ -175,7 +175,6 @@ class BinLogStreamReader(object):
         slave_uuid=None,
         pymysql_wrapper=None,
         slave_heartbeat=None,
-        is_mariadb=False,
         annotate_rows_event=False,
         ignore_decode_errors=False,
         verify_checksum=False,
@@ -213,10 +212,8 @@ class BinLogStreamReader(object):
                              many event to skip in binlog). See
                              MASTER_HEARTBEAT_PERIOD in mysql documentation
                              for semantics
-            is_mariadb: Flag to indicate it's a MariaDB server, used with auto_position
-                    to point to Mariadb specific GTID.
             annotate_rows_event: Parameter value to enable annotate rows event in mariadb,
-                    used with 'is_mariadb'
+                    only used when the connected database is mariadb.
             ignore_decode_errors: If true, any decode errors encountered
                                   when reading column data will be ignored.
             verify_checksum: If true, verify events read from the binary log by examining checksums.
@@ -263,7 +260,7 @@ class BinLogStreamReader(object):
         self.log_file = log_file
         self.auto_position = auto_position
         self.skip_to_timestamp = skip_to_timestamp
-        self.is_mariadb = is_mariadb
+        self.is_mariadb = False if self.__get_dbms == "mysql" else True
         self.__annotate_rows_event = annotate_rows_event
         if enable_logging:
             self.__log_valid_parameters()
@@ -732,13 +729,14 @@ class BinLogStreamReader(object):
         return frozenset(events)
 
     def __get_dbms(self):
-        if not self.__connected_ctl:
-            self.__connect_to_ctl()
+        """Return 'mariadb' if the connected database is mariadb, 'mysql' otherwise."""
+        conn = self.pymysql_wrapper(**self.__connection_settings)
 
-        cur = self._ctl_connection.cursor()
+        cur = conn.cursor()
         cur.execute("SELECT VERSION();")
-
         version_info = cur.fetchone().get("VERSION()", "")
+
+        conn.close()
 
         if "MariaDB" in version_info:
             return "mariadb"
