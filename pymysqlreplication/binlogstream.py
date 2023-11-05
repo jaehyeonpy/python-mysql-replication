@@ -213,7 +213,7 @@ class BinLogStreamReader(object):
                              MASTER_HEARTBEAT_PERIOD in mysql documentation
                              for semantics
             annotate_rows_event: Parameter value to enable annotate rows event in mariadb,
-                    only used when the connected database is mariadb.
+                    only set True when the connected database is mariadb.
             ignore_decode_errors: If true, any decode errors encountered
                                   when reading column data will be ignored.
             verify_checksum: If true, verify events read from the binary log by examining checksums.
