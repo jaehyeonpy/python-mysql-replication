@@ -260,7 +260,6 @@ class BinLogStreamReader(object):
         self.log_file = log_file
         self.auto_position = auto_position
         self.skip_to_timestamp = skip_to_timestamp
-        self.is_mariadb = False if self.__get_dbms == "mysql" else True
         self.__annotate_rows_event = annotate_rows_event
         if enable_logging:
             self.__log_valid_parameters()
@@ -278,6 +277,9 @@ class BinLogStreamReader(object):
         else:
             self.pymysql_wrapper = pymysql.connect
         self.mysql_version = (0, 0, 0)
+
+        self.is_mariadb = False if self.__get_dbms() == "mysql" else True
+        print(self.is_mariadb)
 
     def close(self):
         if self.__connected_stream:
@@ -735,7 +737,6 @@ class BinLogStreamReader(object):
         cur = conn.cursor()
         cur.execute("SELECT VERSION();")
         version_info = cur.fetchone()[0]
-
         conn.close()
 
         if "MariaDB" in version_info:

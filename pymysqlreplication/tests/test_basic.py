@@ -1313,7 +1313,7 @@ class TestMariadbBinlogStreamReader(base.PyMySQLReplicationTestCase):
     def test_binlog_checkpoint_event(self):
         self.stream.close()
         self.stream = BinLogStreamReader(
-            self.database, server_id=1023, blocking=False, is_mariadb=True
+            self.database, server_id=1023, blocking=False, #is_mariadb=True
         )
 
         query = "DROP TABLE IF EXISTS test"
@@ -1364,7 +1364,7 @@ class TestMariadbBinlogStreamReader2(base.PyMySQLReplicationTestCase):
             server_id=1024,
             blocking=False,
             only_events=[MariadbAnnotateRowsEvent],
-            is_mariadb=True,
+            #is_mariadb=True,
             annotate_rows_event=True,
         )
 
@@ -1424,7 +1424,7 @@ class TestMariadbBinlogStreamReader2(base.PyMySQLReplicationTestCase):
             server_id=1024,
             blocking=False,
             only_events=[MariadbGtidListEvent],
-            is_mariadb=True,
+            #is_mariadb=True,
         )
 
         query = "CREATE TABLE test (id INT NOT NULL AUTO_INCREMENT, data VARCHAR (50) NOT NULL, PRIMARY KEY (id))"

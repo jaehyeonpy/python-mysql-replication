@@ -81,7 +81,7 @@ if __name__ == "__main__":
             MariadbAnnotateRowsEvent,
         ],
         auto_position=gtid,
-        is_mariadb=True,
+        #is_mariadb=True,
         annotate_rows_event=True,
     )
 
